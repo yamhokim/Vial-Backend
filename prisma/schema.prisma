@@ -21,6 +21,11 @@ model FormData {
 
 model Query {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  status      String    @default("OPEN")
   formData    FormData  @relation(fields: [formDataId], references: [id])
   formDataId  String    @unique @db.Uuid 
 
