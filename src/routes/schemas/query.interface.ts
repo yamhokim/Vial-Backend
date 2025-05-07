@@ -1,3 +1,4 @@
+// Defines the structure of query entries
 export interface IQuery {
   id: string
   title: string
