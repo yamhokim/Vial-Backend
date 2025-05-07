@@ -88,6 +88,33 @@ async function queryRoutes(app: FastifyInstance) {
       }
     },
   })
+
+  // Delete a query by ID
+  app.delete<{
+    Params: { id: string }
+  }>('/:id', {
+    async handler(req, reply) {
+      const { id } = req.params
+      log.debug({ id }, 'delete query')
+      try {
+        // Check if query exists
+        const existingQuery = await prisma.query.findUnique({
+          where: { id },
+        })
+        if (!existingQuery) {
+          throw new ApiError('Query not found', 404)
+        }
+
+        await prisma.query.delete({
+          where: { id },
+        })
+        reply.code(204).send()
+      } catch (err: any) {
+        log.error({ err }, err.message)
+        throw new ApiError('Failed to delete query', 400)
+      }
+    },
+  })
 }
 
 export default queryRoutes
