@@ -52,6 +52,42 @@ async function queryRoutes(app: FastifyInstance) {
   })
 
   // Update an existing query by ID
+  app.put<{
+    Params: { id: string }
+    Body: {
+      status: 'OPEN' | 'RESOLVED'
+      description?: string
+    }
+    Reply: IQuery
+  }>('/:id', {
+    async handler(req, reply) {
+      log.debug('PUT /:id handler called')
+      const { id } = req.params
+      const { status, description } = req.body
+      log.debug({ id, status }, 'update query')
+      try {
+        // Check if query exists
+        const existingQuery = await prisma.query.findUnique({
+          where: { id },
+        })
+        if (!existingQuery) {
+          throw new ApiError('Query not found', 404)
+        }
+
+        const query = await prisma.query.update({
+          where: { id },
+          data: {
+            status,
+            ...(description && { description }), // Only update description if provided
+          },
+        })
+        reply.send(query)
+      } catch (err: any) {
+        log.error({ err }, err.message)
+        throw new ApiError('Failed to update query', 400)
+      }
+    },
+  })
 }
 
 export default queryRoutes
