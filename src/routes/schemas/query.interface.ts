@@ -1,7 +1,7 @@
 export interface IQuery {
   id: string
   title: string
-  description?: string
+  description: string | null
   createdAt: Date
   updatedAt: Date
   status: 'OPEN' | 'RESOLVED'

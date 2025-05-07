@@ -4,7 +4,7 @@ export interface IFormData {
   id: string
   question: string
   answer: string
-  query?: IQuery
+  query: null | IQuery
 }
 
 export interface ICountedFormData {
