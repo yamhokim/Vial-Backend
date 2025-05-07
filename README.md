@@ -1,131 +1,268 @@
-# take-home-assignment-A
+# Vial Backend
 
-## Getting Started
-- copy the .env.example file into a .env file
-- `docker-compose build`
-- `docker-compose up`
-- `npm run migrate`
-- `npm run seed`
-- if you view your database, you should be able to see a populated form data table
-- running the following in your terminal will perform a GET request to fetch the form data
+A RESTful API service built with Fastify, TypeScript, and Prisma for managing form data and queries. This backend service provides the necessary endpoints for the Vial frontend application to handle form data entries and their associated queries.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Node.js (v22+)
+- npm (v10+)
+- Docker and Docker Compose
+
+## Installation
+
+1. Clone the repository:
+
 ```bash
-curl --location 'http://127.0.0.1:8080/form-data' --header 'Content-Type: application/json'
+git clone <repository-url>
+cd vial-backend
 ```
 
-## Introduction
-The purpose of this project is to evaluate your full stack web development skills with an example project that closely resembles your day to day tasks at Vial. 
+2. Set up environment variables:
 
-You will build a simple **Query Management Application** where users can create queries. Each query will have a title, description, date, and a status (OPEN, RESOLVED). The application will consist of a simple frontend (UI), a backend API, and a database to persist the query data.
+```bash
+cp .env.example .env
+```
 
-Queries in the context of an EDC (electronic data capture) system help identify and flag incorrect data entries for patients and alert effected data managers/ users when a query needs to be resolved.
+3. Start the services using Docker:
 
-**NOTE: Images provided in the assignment are just examples, and the frontend does not need to look the same as the provided mock. Be creative with your design!**
+```bash
+docker-compose build
+docker-compose up
+npm run migrate
+npm run seed
+```
 
-- for example some images show the username information, this is not required to submit the assignment
+The API will be available at [http://localhost:8080](http://localhost:8080) by default.
 
-Some helpful links:
+If you ever make any changes to the schema and need to migrate them to keep the database up to data:
 
-- https://medrio.com/blog/query-management-in-clinical-trials/
-- [https://www.biopharmaservices.com/blog/data-cleaning-and-query-management-importance-in-edc/#:~:text=Query management is essential for,risk of regulatory non-compliance](https://www.biopharmaservices.com/blog/data-cleaning-and-query-management-importance-in-edc/#:~:text=Query%20management%20is%20essential%20for,risk%20of%20regulatory%20non%2Dcompliance)
+```bash
+docker exec -it vial-backend-api npx prisma migrate dev --name <name-of-migration>
+```
 
-## Preferred workflow
-* Fork the repository
-* Create as many commits as needed, with the corresponding descriptive message/description
+## API Documentation
 
-## Tech stack
-* [Node](https://nodejs.org/en/)
-* [Typescript](www.google.com)
-* [Fastify](https://www.fastify.io/)
-* [Prisma ORM](https://www.prisma.io/)
-* [PostgreSQL](https://www.postgresql.org/)
-* [Docker and Compose](https://www.docker.com/)
+### Base URL
 
-### Requirements
+```
+http://localhost:8080
+```
 
-1. **Frontend (UI)**:
-    - Use TypeScript / React / Next.js to build a single-page web application
-    - Implement a table view to display data that can be queried (for example below)
-        
-        ![table-view.png](./assets/table-view.png)
-        
-        - the key here is to implement a view that contains
-            - **Question Column**
-            - **Answer Column**
-            - **Queries Column**
-                - the User should be able to hover over this column and “Create Query” if no query exists (e.g. the data does not have a query associated with it)
-                    - a “+” icon should be displayed with a tooltip “Create Query”
-                - otherwise the query is either
-                    - “OPEN” - Red Status with question mark icon
-                    - “RESOLVED” - Green Status with checkmark icon
-        - the table view is fetched from the form-data endpoint
-    - User should be able to add a new query using the “Create Query” button which opens a modal like below:
-        
-        ![create-query.png](./assets/create-query.png)
-        
-        - User should be able to edit the description textbox and submit the form
-        - This data should then be saved in the backend
-            - Payload information
-                - Title (based on the **question** of clicked on data, e.g. “What was the Individual Dose of the Medication”)
-                - Description (from user input)
-                - form data id
-    - If the User is viewing a query that already exists and has a status “OPEN”
-        
-        ![open-query.png](./assets/open-query.png)
-        
-        - User should view something similar to this indicating that the query status is open
-        - User should see what the description of the query is
-        - User should see a button to “Resolve” this query
-            - when “resolve” button is clicked the api should send a request to the backend to update the query status to “RESOLVED”
-    - User should be able to view a “resolved” query
-        
-        ![resolved-query.png](./assets/resolved-query.png)
-        
-        - should clearly indicate that the query is resolved
-        - should clearly display the description text of the query
-        - should clearly display the date the query was created or updated
-2. **Backend (API)**:
-    - Build a **RESTful API for the queries**, a simple application skeleton is provided for the BE with seed data for the form data
-    - The backend should just be extending the existing application given the technologies (node.js, prisma, and seed data)
-    - Submissions that don't build upon the existing application will be immediately rejected
-    - Feel free to include additional technologies/libraries as you see fit to complete the application
-    - Including tests is optional but recommended
-    - The API should have the following endpoints:
-        - ENDPOINT 1: Retrieve a list of all form data and related query data.
-          - the list endpoint is already implemented but you will have to include the query relation
-        - ENDPOINT 2: Create a new query.
-        - ENDPOINT 3: Update an existing query by ID.
-        - (BONUS ENDPOINT): Delete a query by ID.
-3. **Database**:
-    - (Given) The **form data model** should have the following fields:
-      - `id`: Unique identifier (auto-increment or UUID).
-      - `question`: String, required
-      - `answer`: String, required
-    - The **query model** should have the following fields:
-        - `id`: Unique identifier (auto-increment or UUID).
-        - `title`: String, required.
-        - `description`: String, optional.
-        - `createdAt`: Date or string (ISO format), required.
-            - Indicates when the query was created.
-        - `updatedAt`: Date or string (ISO format), required.
-            - Indicates when the query was last updated.
-        - `status`: String, possible values (OPEN, RESOLVED).
-        - `formData`: relational field to a formData
-        - `formDataId`: the relational foreign key id of the formData
+### Authentication
 
-### Guidelines
+Currently, the API does not require authentication.
 
-- **Tech Stack**: The frontend application should be built using TypeScript/React/Next.js with Mantine as a suggested UI library. The backend application should be built using the existing provided skeleton (Node.js, TypeScript, Prisma, PSQL).
-- **Code Quality**: Please ensure your code is clean, well-organized, and well-documented. Add comments where necessary to explain key decisions.
-- **Time Management**: This is intended to be a 4+ hour assignment. Focus on getting the basic functionality working first, and add optional features if you have time.
-- **(OPTIONAL) API Documentation**: Provide basic API documentation (e.g., using Swagger or in README.md).
-- **(OPTIONAL) Deployment**: If possible, deploy your application to a service like Heroku, Vercel, or Netlify, and share the live URL with us for bonus points!
+### Response Format
 
-### Submission Instructions
+All responses are in JSON format and follow this structure:
 
-- Share a GitHub repository with your code and provide instructions for how to run the project locally.
-- (OPTIONAL) If you deploy the application, include the live link in the repository’s README.
-- Ensure that your submission includes clear documentation on how to set up and run the backend and frontend.
+```json
+{
+  "data": {}, // Response data (if successful)
+  "error": {
+    "message": "Error message",
+    "code": "ERROR_CODE"
+  }
+  // Error information (if failed)
+}
+```
 
----
+### Endpoints
 
-We hope you have fun with the assignment and we look forward to hearing from you!
+#### 1. Get All Form Data
+
+Retrieves all form data entries with their associated queries.
+
+```http
+GET /form-data
+```
+
+**Response**
+
+```json
+{
+  "total": 10,
+  "formData": [
+    {
+      "id": "uuid",
+      "question": "What was the Individual Dose of the Medication?",
+      "answer": "500mg",
+      "query": {
+        "id": "uuid",
+        "title": "Query Title",
+        "description": "Query Description",
+        "status": "OPEN",
+        "createdAt": "2024-03-20T12:00:00Z",
+        "updatedAt": "2024-03-20T12:00:00Z"
+      }
+    }
+  ]
+}
+```
+
+#### 2. Create Query
+
+Creates a new query for a form data entry.
+
+```http
+POST /query
+```
+
+**Request Body**
+
+```json
+{
+  "title": "Query Title",
+  "description": "Query Description",
+  "formDataId": "uuid"
+}
+```
+
+**Response (201 Created)**
+
+```json
+{
+  "id": "uuid",
+  "title": "Query Title",
+  "description": "Query Description",
+  "status": "OPEN",
+  "createdAt": "2024-03-20T12:00:00Z",
+  "updatedAt": "2024-03-20T12:00:00Z",
+  "formDataId": "uuid"
+}
+```
+
+**Error Responses**
+
+- `400 Bad Request`: Invalid request body
+- `404 Not Found`: Form data not found
+- `400 Bad Request`: Query already exists for this form data
+
+#### 3. Update Query
+
+Updates an existing query's status and optional description.
+
+```http
+PUT /query/:id
+```
+
+**URL Parameters**
+
+- `id`: Query UUID
+
+**Request Body**
+
+```json
+{
+  "status": "RESOLVED"
+}
+```
+
+**Response (200 OK)**
+
+```json
+{
+  "id": "uuid",
+  "title": "Query Title",
+  "description": "Query description",
+  "status": "RESOLVED",
+  "createdAt": "2024-03-20T12:00:00Z",
+  "updatedAt": "2024-03-20T13:00:00Z",
+  "formDataId": "uuid"
+}
+```
+
+**Error Responses**
+
+- `400 Bad Request`: Invalid request body
+- `404 Not Found`: Query not found
+
+#### 4. Delete Query
+
+Deletes a query by ID.
+
+```http
+DELETE /query/:id
+```
+
+**URL Parameters**
+
+- `id`: Query UUID
+
+**Response (204 No Content)**
+No response body
+
+**Error Responses**
+
+- `404 Not Found`: Query not found
+
+### Error Codes
+
+| Code                   | Description                                                 |
+| ---------------------- | ----------------------------------------------------------- |
+| `FORM_DATA_NOT_FOUND`  | The specified form data entry does not exist                |
+| `QUERY_NOT_FOUND`      | The specified query does not exist                          |
+| `QUERY_ALREADY_EXISTS` | A query already exists for this form data                   |
+| `INVALID_STATUS`       | The provided status is not valid (must be OPEN or RESOLVED) |
+
+## Database Schema
+
+### Form Data Model
+
+```prisma
+model FormData {
+  id       String  @id @default(uuid())
+  question String
+  answer   String
+  query    Query?
+}
+```
+
+### Query Model
+
+```prisma
+model Query {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  status      String   @default("OPEN")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  formData    FormData @relation(fields: [formDataId], references: [id])
+  formDataId  String   @unique
+}
+```
+
+## Testing the API
+
+You can test the API using curl:
+
+```bash
+# Get all form data
+curl --location 'http://localhost:8080/form-data' \
+--header 'Content-Type: application/json'
+
+# Create a new query
+curl --location 'http://localhost:8080/query' \
+--header 'Content-Type: application/json' \
+--data '{
+    "title": "Query Title",
+    "description": "Query Description",
+    "formDataId": "form-data-id"
+}'
+```
+
+## Project Structure
+
+```
+vial-backend/
+├── src/
+│   ├── routes/              # API route handlers
+│   ├── db/                  # Database configuration
+│   ├── errors/             # Error handling
+│   └── schemas/            # TypeScript interfaces
+├── prisma/                 # Prisma schema and migrations
+└── docker-compose.yml      # Docker configuration
+```
