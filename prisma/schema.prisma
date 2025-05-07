@@ -31,5 +31,3 @@ model Query {
 
   @@map("queries")
 }
-
-
