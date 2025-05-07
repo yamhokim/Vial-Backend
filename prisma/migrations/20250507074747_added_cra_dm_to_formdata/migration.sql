@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "form_data" ADD COLUMN     "cra" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "dm" BOOLEAN NOT NULL DEFAULT false;
