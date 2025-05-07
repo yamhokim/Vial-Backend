@@ -1,5 +1,4 @@
 import { FastifyInstance } from 'fastify'
-
 import prisma from '../db/db_client'
 import { serializer } from './middleware/pre_serializer'
 import { ICountedFormData } from './schemas/formData.interface'
